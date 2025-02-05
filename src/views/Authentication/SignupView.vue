@@ -29,8 +29,6 @@ const register = async (payload: RegisterForm) => {
   });
   try {
     const response = await axiosInstance.post("/register", payload);
-
-    console.log(response.data);
   } catch (error) {
 
   }
@@ -39,7 +37,7 @@ const register = async (payload: RegisterForm) => {
 </script>
 
 <template>
-  <DefaultAuthCard subtitle="Psiehlavičky.sk" title="Partner">
+  <DefaultAuthCard subtitle="Psiehlavičky.sk" title="Partner register">
     <form @submit.prevent="register(form)">
       <InputGroup label="Name" type="text" placeholder="Enter your full name">
         <svg class="fill-current" width="22" height="22" viewBox="0 0 22 22" fill="none"
