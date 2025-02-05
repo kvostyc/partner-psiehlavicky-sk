@@ -19,7 +19,7 @@ const routes = [
     name: 'eCommerce',
     component: ECommerceView,
     meta: {
-      title: 'eCommerce Dashboard'
+      title: 'Dashboard'
     }
   },
   {
@@ -121,7 +121,7 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  document.title = `Vue.js ${to.meta.title} | TailAdmin - Vue.js Tailwind CSS Dashboard Template`
+  document.title = `${to.meta.title} | Psiehlavičky Partner`
   next()
 })
 
