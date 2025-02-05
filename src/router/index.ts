@@ -95,7 +95,7 @@ const routes = [
     }
   },
   {
-    path: '/auth/signin',
+    path: '/login',
     name: 'signin',
     component: SigninView,
     meta: {
@@ -103,7 +103,7 @@ const routes = [
     }
   },
   {
-    path: '/auth/signup',
+    path: '/register',
     name: 'signup',
     component: SignupView,
     meta: {

@@ -1,13 +1,12 @@
 <script setup lang="ts">
+
 import axiosInstance from '@/axios'
 import DefaultAuthCard from '@/components/Auths/DefaultAuthCard.vue'
 import InputGroup from '@/components/Auths/InputGroup.vue'
-import BreadcrumbDefault from '@/components/Breadcrumbs/BreadcrumbDefault.vue'
-import DefaultLayout from '@/layouts/DefaultLayout.vue'
+import ErrorMessage from '@/components/Error/Input/ErrorMessage.vue'
+import { AxiosError } from 'axios';
 
-import { reactive, ref } from 'vue'
-
-const pageTitle = ref('Sign Up')
+import { reactive } from 'vue'
 
 interface RegisterForm {
   name: string;
@@ -23,14 +22,26 @@ const form = reactive<RegisterForm>({
   password_confirmation: "",
 });
 
+const errors = reactive({
+  name: [],
+  email: [],
+  password: [],
+});
+
 const register = async (payload: RegisterForm) => {
   await axiosInstance.get("/sanctum/csrf-cookie", {
     baseURL: "http://localhost:8000",
   });
   try {
     const response = await axiosInstance.post("/register", payload);
-  } catch (error) {
 
+    console.log(response.data);
+  } catch (e) {
+    if (e instanceof AxiosError && e.response?.status === 422) {
+      errors.name = e.response.data.errors.name;
+      errors.email = e.response.data.errors.email;
+      errors.password = e.response.data.errors.password;
+    }
   }
 };
 
@@ -39,7 +50,7 @@ const register = async (payload: RegisterForm) => {
 <template>
   <DefaultAuthCard subtitle="Psiehlavičky.sk" title="Partner register">
     <form @submit.prevent="register(form)">
-      <InputGroup label="Name" type="text" placeholder="Enter your full name">
+      <InputGroup label="Name" type="text" placeholder="Enter your full name" v-model="form.name">
         <svg class="fill-current" width="22" height="22" viewBox="0 0 22 22" fill="none"
           xmlns="http://www.w3.org/2000/svg">
           <g opacity="0.5">
@@ -52,8 +63,9 @@ const register = async (payload: RegisterForm) => {
           </g>
         </svg>
       </InputGroup>
+      <ErrorMessage :errors="errors.name" />
 
-      <InputGroup label="Email" type="email" placeholder="Enter your email">
+      <InputGroup label="Email" type="email" placeholder="Enter your email" v-model="form.email">
         <svg class="fill-current" width="22" height="22" viewBox="0 0 22 22" fill="none"
           xmlns="http://www.w3.org/2000/svg">
           <g opacity="0.5">
@@ -63,8 +75,9 @@ const register = async (payload: RegisterForm) => {
           </g>
         </svg>
       </InputGroup>
+      <ErrorMessage :errors="errors.email" />
 
-      <InputGroup label="Password" type="password" placeholder="Enter your password">
+      <InputGroup label="Password" type="password" placeholder="Enter your password" v-model="form.password">
         <svg class="fill-current" width="22" height="22" viewBox="0 0 22 22" fill="none"
           xmlns="http://www.w3.org/2000/svg">
           <g opacity="0.5">
@@ -77,8 +90,10 @@ const register = async (payload: RegisterForm) => {
           </g>
         </svg>
       </InputGroup>
+      <ErrorMessage :errors="errors.password" />
 
-      <InputGroup label="Re-type Password" type="password" placeholder="Re-enter your password">
+      <InputGroup label="Re-type Password" type="password" placeholder="Re-enter your password"
+        v-model="form.password_confirmation">
         <svg class="fill-current" width="22" height="22" viewBox="0 0 22 22" fill="none"
           xmlns="http://www.w3.org/2000/svg">
           <g opacity="0.5">
@@ -100,7 +115,7 @@ const register = async (payload: RegisterForm) => {
       <div class="mt-6 text-center">
         <p class="font-medium">
           Already have an account?
-          <router-link to="/auth/signin" class="text-primary">Sign in</router-link>
+          <router-link to="/login" class="text-primary">Sign in</router-link>
         </p>
       </div>
     </form>

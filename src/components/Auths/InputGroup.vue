@@ -1,14 +1,23 @@
 <script setup lang="ts">
-const props = defineProps(['label', 'type', 'placeholder'])
+defineProps<{
+  label: string;
+  type: string;
+  placeholder: string;
+  modelValue: string;
+}>();
+
+const emit = defineEmits(["update:modelValue"]);
 </script>
 
 <template>
-  <div class="mb-4">
-    <label class="mb-2.5 block font-medium text-black dark:text-white">{{ props.label }}</label>
+  <div class="mb-2">
+    <label class="mb-2.5 block font-medium text-black dark:text-white">{{ label }}</label>
     <div class="relative">
       <input
-        :type="props.type"
-        :placeholder="props.placeholder"
+        :type="type"
+        :placeholder="placeholder"
+        :value="modelValue"
+        @input="emit('update:modelValue', ($event.target as HTMLInputElement).value)"
         class="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary text-black dark:text-white"
       />
 
