@@ -8,24 +8,6 @@ import ChatCard from '@/components/ChatCard.vue'
 import MapOne from '@/components/Maps/MapOne.vue'
 import TableOne from '@/components/Tables/TableOne.vue'
 import DefaultLayout from '@/layouts/DefaultLayout.vue'
-import axiosInstance from '@/axios'
-import { ref } from 'vue';
-
-const user = ref({
-  "name": "",
-  "email": "",
-});
-
-const getUser = async () => {
-  try {
-    const response = await axiosInstance.get("/user");
-    user.value = response.data;
-  } catch (error) {
-    console.error(error);
-  }
-};
-
-getUser();
 
 </script>
 
