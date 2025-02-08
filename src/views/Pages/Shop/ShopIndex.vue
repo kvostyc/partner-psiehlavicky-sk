@@ -39,7 +39,7 @@ const deleteShop = (shop: Shop) => {
     if (confirm(`Naozaj chceš odstrániť obchod "${shop.name}"?`)) {
         shops.value = shops.value.filter(s => s.id !== shop.id);
 
-        $toast.success('Deleted succesfully!');
+        $toast.success('Úspešne vymazané.');
     }
 };
 

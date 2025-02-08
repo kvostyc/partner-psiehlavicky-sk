@@ -6,7 +6,6 @@ import ChartThree from '@/components/Charts/ChartThree.vue'
 import ChartTwo from '@/components/Charts/ChartTwo.vue'
 import ChatCard from '@/components/ChatCard.vue'
 import MapOne from '@/components/Maps/MapOne.vue'
-import TableOne from '@/components/Tables/TableOne.vue'
 import DefaultLayout from '@/layouts/DefaultLayout.vue'
 
 </script>
@@ -33,12 +32,6 @@ import DefaultLayout from '@/layouts/DefaultLayout.vue'
       <!-- ====== Map One Start -->
       <MapOne />
       <!-- ====== Map One End -->
-
-      <!-- ====== Table One Start -->
-      <div class="col-span-12 xl:col-span-8">
-        <TableOne />
-      </div>
-      <!-- ====== Table One End -->
 
       <!-- ====== Chat Card Start -->
       <ChatCard />
