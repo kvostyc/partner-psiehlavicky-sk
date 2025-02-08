@@ -12,6 +12,9 @@ import ProfileView from '@/views/ProfileView.vue'
 import TablesView from '@/views/TablesView.vue'
 import AlertsView from '@/views/UiElements/AlertsView.vue'
 import ButtonsView from '@/views/UiElements/ButtonsView.vue'
+import ProductIndex from '@/views/Pages/Product/ProductIndex.vue'
+import ShopIndex from '@/views/Pages/Shop/ShopIndex.vue'
+import { useAuthStore } from '@/stores/auth'
 
 const routes = [
   {
@@ -109,6 +112,22 @@ const routes = [
     meta: {
       title: 'Signup'
     }
+  },
+  {
+    path: '/products',
+    name: 'products.index',
+    component: ProductIndex,
+    meta: {
+      title: 'Products',
+    },
+  },
+  {
+    path: '/shops',
+    name: 'shops.index',
+    component: ShopIndex,
+    meta: {
+      title: 'Shops',
+    },
   }
 ]
 
@@ -122,7 +141,13 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   document.title = `${to.meta.title} | Psiehlavičky Partner`
-  next()
+  const authStore = useAuthStore()
+
+  if (to.meta.permission && !authStore.hasPermission(to.meta.permission)) {
+    next('/403')
+  } else {
+    next()
+  }
 })
 
 export default router

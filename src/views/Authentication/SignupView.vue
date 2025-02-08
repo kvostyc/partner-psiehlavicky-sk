@@ -4,6 +4,7 @@ import axiosInstance from '@/axios'
 import DefaultAuthCard from '@/components/Auths/DefaultAuthCard.vue'
 import InputGroup from '@/components/Auths/InputGroup.vue'
 import ErrorMessage from '@/components/Error/Input/ErrorMessage.vue'
+import router from '@/router';
 import { AxiosError } from 'axios';
 
 import { reactive } from 'vue'
@@ -35,7 +36,7 @@ const register = async (payload: RegisterForm) => {
   try {
     const response = await axiosInstance.post("/register", payload);
 
-    console.log(response.data);
+    router.push({name: "eCommerce"});
   } catch (e) {
     if (e instanceof AxiosError && e.response?.status === 422) {
       errors.name = e.response.data.errors.name;

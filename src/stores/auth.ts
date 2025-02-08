@@ -1,82 +1,34 @@
-import { defineStore } from "pinia";
-import axios from "axios";
+import { defineStore } from 'pinia'
+import axios from 'axios'
 
 interface User {
-    id: number;
-    email: string;
-    firstName: string;
-    lastName: string;
-    companyName?: string;
+    id: number
+    name: string
+    email: string
 }
 
-interface AuthState {
-    user: User | null;
-    token: string | null;
-    isAuthenticated: boolean;
-}
-
-export const useAuthStore = defineStore("auth", {
-    state: (): AuthState => ({
-        user: null,
-        token: localStorage.getItem("token") || null,
-        isAuthenticated: !!localStorage.getItem("token"),
+export const useAuthStore = defineStore('auth', {
+    state: () => ({
+        user: null as User | null,
+        roles: [] as string[],
+        permissions: [] as string[],
     }),
-
-    getters: {
-        getUser(state): User | null {
-            return state.user;
-        },
-        getToken(state): string | null {
-            return state.token;
-        },
-        isLoggedIn(state): boolean {
-            return state.isAuthenticated;
-        },
-    },
-
     actions: {
-        async login(email: string, password: string, isExternal = false): Promise<void> {
-            try {
-                const endpoint = isExternal
-                    ? "/api/external/auth/login"
-                    : "/api/internal/auth/login";
-
-                const response = await axios.post<{ token: string; user: User }>(endpoint, {
-                    email,
-                    password,
-                });
-
-                this.token = response.data.token;
-                this.isAuthenticated = true;
-                this.user = response.data.user;
-
-                localStorage.setItem("token", this.token);
-                axios.defaults.headers.common["Authorization"] = `Bearer ${this.token}`;
-            } catch (error: any) {
-                console.error("Login error:", error.response?.data || error.message);
-                throw error;
-            }
+        async fetchUser() {
+            const { data } = await axios.get<User>('/api/user')
+            this.user = data
+            await this.fetchPermissions()
         },
-
-        async fetchUser(): Promise<void> {
-            if (!this.token) return;
-
-            try {
-                const response = await axios.get<User>("/api/internal/auth/me");
-                this.user = response.data;
-            } catch (error: any) {
-                console.error("Fetch user error:", error.response?.data || error.message);
-                this.logout();
-            }
+        async fetchPermissions() {
+            const { data } = await axios.get<{ roles: string[], permissions: string[] }>('/api/user/permissions')
+            this.roles = data.roles
+            this.permissions = data.permissions
         },
-
-        logout(): void {
-            this.token = null;
-            this.user = null;
-            this.isAuthenticated = false;
-
-            localStorage.removeItem("token");
-            delete axios.defaults.headers.common["Authorization"];
+        hasPermission(permission: string): boolean {
+            return this.permissions.includes(permission)
         },
-    },
-});
+        hasRole(role: string): boolean {
+            return this.roles.includes(role)
+        }
+    }
+})
