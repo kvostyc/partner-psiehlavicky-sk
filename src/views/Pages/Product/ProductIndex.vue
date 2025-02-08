@@ -25,9 +25,7 @@ const products = ref<Product[]>([]);
 const getProducts = async () => {
   try {
     const response = await axiosInstance.get<{ data: Product[] }>('/product');
-    products.value = response.data.data; // Uisti sa, že server posiela objekty vo formáte `{ data: [...] }`
-
-    console.log(products.value);
+    products.value = response.data.data; 
   } catch (error) {
     console.error('Chyba pri načítaní produktov:', error);
     $toast.error('Pri načítaní produktov sa vyskytla chyba.');

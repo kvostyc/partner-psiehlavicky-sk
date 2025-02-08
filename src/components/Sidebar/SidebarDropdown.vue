@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useSidebarStore } from '@/stores/sidebar'
+import { useLoadingStore } from '@/stores/loadingStore';
 import { ref } from 'vue'
 
 const sidebarStore = useSidebarStore()
@@ -8,6 +9,12 @@ const props = defineProps(['items', 'page'])
 const items = ref(props.items)
 
 const handleItemClick = (index: number) => {
+  const loadingStore = useLoadingStore();
+
+  if(loadingStore.isLoading){
+    return;
+  }
+
   const pageName =
     sidebarStore.selected === props.items[index].label ? '' : props.items[index].label
   sidebarStore.selected = pageName
