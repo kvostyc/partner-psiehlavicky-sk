@@ -126,7 +126,7 @@ const routes = [
     name: 'shops.index',
     component: ShopIndex,
     meta: {
-      title: 'Shops',
+      title: 'Moje e-shopy',
       permission: "view shop",
     },
   }

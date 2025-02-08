@@ -15,7 +15,7 @@ interface Shop {
     revenues?: string;
 }
 
-const pageTitle = ref('Shops');
+const pageTitle = ref('Moje e-shopy');
 const shops = ref<Shop[]>([]);
 
 const getShops = async () => {
