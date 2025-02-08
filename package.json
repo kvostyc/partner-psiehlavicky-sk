@@ -18,7 +18,6 @@
     "axios": "^1.7.9",
     "flatpickr": "^4.6.13",
     "jsvectormap": "^1.5.3",
-    "laravel-permission-to-vuejs": "^3.0.8",
     "pinia": "^2.1.7",
     "vue": "^3.3.11",
     "vue-router": "^4.2.5",

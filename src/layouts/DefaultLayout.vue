@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import HeaderArea from '@/components/Header/HeaderArea.vue'
 import SidebarArea from '@/components/Sidebar/SidebarArea.vue'
+import LoadingOverlay from '@/components/Loadings/LoadingOverlay.vue'
 </script>
 
 <template>
+  <LoadingOverlay />
   <!-- ===== Page Wrapper Start ===== -->
   <div class="flex h-screen overflow-hidden">
     <!-- ===== Sidebar Start ===== -->

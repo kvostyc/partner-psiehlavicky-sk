@@ -14,7 +14,7 @@ import AlertsView from '@/views/UiElements/AlertsView.vue'
 import ButtonsView from '@/views/UiElements/ButtonsView.vue'
 import ProductIndex from '@/views/Pages/Product/ProductIndex.vue'
 import ShopIndex from '@/views/Pages/Shop/ShopIndex.vue'
-import { useAuthStore } from '@/stores/auth'
+import { useUserStore } from '@/stores/userStore'
 
 const routes = [
   {
@@ -127,6 +127,7 @@ const routes = [
     component: ShopIndex,
     meta: {
       title: 'Shops',
+      permission: "view shop",
     },
   }
 ]
@@ -139,15 +140,24 @@ const router = createRouter({
   }
 })
 
-router.beforeEach((to, from, next) => {
-  document.title = `${to.meta.title} | Psiehlavičky Partner`
-  const authStore = useAuthStore()
+router.beforeEach(async (to, from, next) => {
+  document.title = `${to.meta.title} | Psiehlavičky Partner`;
+  const userStore = useUserStore();
 
-  if (to.meta.permission && !authStore.hasPermission(to.meta.permission)) {
-    next('/403')
-  } else {
-    next()
+  if (!userStore.user && to.name !== "signin") {
+    await userStore.getUser();
   }
-})
+
+  if (typeof to.meta.permission === "string" && !userStore.hasPermission(to.meta.permission)) {
+    return next("/403");
+  }
+
+  if (typeof to.meta.role === "string" && !userStore.hasRole(to.meta.role)) {
+    return next("/403");
+  }
+
+  next();
+});
+
 
 export default router
