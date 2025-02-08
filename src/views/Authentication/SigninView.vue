@@ -4,9 +4,11 @@ import axiosInstance from '@/axios';
 import DefaultAuthCard from '@/components/Auths/DefaultAuthCard.vue';
 import InputGroup from '@/components/Auths/InputGroup.vue';
 import ErrorMessage from '@/components/Error/Input/ErrorMessage.vue';
+import LoadingOverlay from '@/components/Loadings/LoadingOverlay.vue';
 import router from '@/router';
 import { AxiosError } from 'axios';
 import { reactive } from 'vue';
+import { useToast } from 'vue-toast-notification';
 
 interface LoginForm {
   email: string,
@@ -34,7 +36,10 @@ const login = async (payload: LoginForm) => {
   try {
     const response = await axiosInstance.post("/login", payload);
 
-    router.push({name: "eCommerce"});
+    router.push({ name: "eCommerce" });
+
+    const $toast = useToast();
+    $toast.success('Successfully logged in.');
   } catch (e) {
     if (e instanceof AxiosError && e.response?.status === 422) {
       errors.email = e.response.data.errors.email;
@@ -46,6 +51,8 @@ const login = async (payload: LoginForm) => {
 </script>
 
 <template>
+  <LoadingOverlay />
+
   <DefaultAuthCard subtitle="Psiehlavičky.sk" title="Partner login">
     <form @submit.prevent="login(form)">
       <InputGroup label="Email" type="email" placeholder="Enter your email" v-model="form.email">

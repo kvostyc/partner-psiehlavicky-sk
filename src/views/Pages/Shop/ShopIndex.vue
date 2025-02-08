@@ -4,6 +4,9 @@ import BreadcrumbDefault from '@/components/Breadcrumbs/BreadcrumbDefault.vue';
 import DefaultLayout from '@/layouts/DefaultLayout.vue';
 import TableOne from '@/components/Tables/TableOne.vue';
 import axiosInstance from '@/axios';
+import { useToast } from 'vue-toast-notification';
+
+const $toast = useToast();
 
 interface Shop {
     id: number;
@@ -35,6 +38,8 @@ const editShop = (shop: Shop) => {
 const deleteShop = (shop: Shop) => {
     if (confirm(`Naozaj chceš odstrániť obchod "${shop.name}"?`)) {
         shops.value = shops.value.filter(s => s.id !== shop.id);
+
+        $toast.success('Deleted succesfully!');
     }
 };
 
