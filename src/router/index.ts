@@ -15,6 +15,7 @@ import ButtonsView from '@/views/UiElements/ButtonsView.vue'
 import ProductIndex from '@/views/Pages/Product/ProductIndex.vue'
 import ShopIndex from '@/views/Pages/Shop/ShopIndex.vue'
 import { useUserStore } from '@/stores/userStore'
+import ProductCreate from '@/views/Pages/Product/ProductCreate.vue'
 
 const routes = [
   {
@@ -119,6 +120,22 @@ const routes = [
     component: ProductIndex,
     meta: {
       title: 'Products',
+    },
+  },
+  {
+    path: '/product/create',
+    name: 'products.create',
+    component: ProductCreate,
+    meta: {
+      title: 'Vytvoriť produkt',
+    },
+  },
+  {
+    path: '/product/edit/:id',
+    name: 'products.edit',
+    component: ProductCreate,
+    meta: {
+      title: 'Upraviť produkt',
     },
   },
   {

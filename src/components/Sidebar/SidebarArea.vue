@@ -79,7 +79,11 @@ const menuGroups = ref([
               </svg>
               `,
         label: 'Products',
-        route: '/products',
+        route: '#',
+        children: [
+          { label: 'Moje produkty', route: '/products' },
+          { label: 'Vytvoriť produkt', route: '/product/create' }
+        ]
       },
       {
         icon: `<svg
