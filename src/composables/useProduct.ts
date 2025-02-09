@@ -9,11 +9,16 @@ interface Product {
     free_description: string;
     shop_id: number | null;
     category: string | null;
-    tags: string[];
-    product_status: string[];
-    product_status_id: number| null;
+    tags: [];
+    product_status: ProductStatus;
+    product_status_id: number | null;
     created_at?: string;
     updated_at?: string;
+}
+
+interface ProductStatus {
+    name: string;
+    identifier: string;
 }
 
 export function useProduct() {
@@ -103,7 +108,7 @@ export function useProduct() {
         }
     };
 
-    const changeProductStatus = async(id: number, status_identifier: string) => {
+    const changeProductStatus = async (id: number, status_identifier: string) => {
         loading.value = true;
         error.value = null;
         try {

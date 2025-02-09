@@ -95,9 +95,11 @@ onMounted(async () => {
                 </p>
             </div>
 
-            <div class="flex justify-end items-center" v-if="isEditMode">
-                <Button v-if="product.product_status.name != 'archived'" type="submit" label="Archivovať produkt" severity="warn" size="small" outlined
-                    v-on:click="changeStatus('archived')" :loading="loading" />
+            <div class="flex justify-end items-center gap-2" v-if="isEditMode">
+                <Button v-if="!loading && product.product_status?.identifier != 'archived'" type="submit" label="Archivovať produkt"
+                    severity="warn" size="small" outlined v-on:click="changeStatus('archived')" :loading="loading" />
+                <Button v-if="!loading && product.product_status?.identifier != 'active'" type="submit" label="Aktivovať produkt"
+                    severity="success" size="small" outlined v-on:click="changeStatus('active')" :loading="loading" />
             </div>
 
             <hr class="mt-3 mb-5" />
