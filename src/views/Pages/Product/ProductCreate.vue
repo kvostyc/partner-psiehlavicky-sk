@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref, computed } from 'vue';
+import { onMounted, ref, computed, nextTick } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import BreadcrumbDefault from '@/components/Breadcrumbs/BreadcrumbDefault.vue';
 import DefaultLayout from '@/layouts/DefaultLayout.vue';
@@ -30,7 +30,9 @@ const submitForm = async () => {
         if (isEditMode.value) {
             await updateProduct(Number(productId.value));
         } else {
-            await createProduct(product.value);
+            const response = await createProduct(product.value);
+            await nextTick();
+            router.push(`/product/edit/${Number(response.data.id)}`);
         }
 
         if (Object.keys(validationErrors.value).length > 0) {
@@ -49,8 +51,6 @@ const submitForm = async () => {
             detail: 'Produkt úspešne uložený.',
             life: 5000
         });
-
-        router.push({ "name": "products.index" });
     } catch (error: any) {
         toast.add({
             severity: 'error',
@@ -96,8 +96,8 @@ onMounted(async () => {
             </div>
 
             <div class="flex justify-end items-center" v-if="isEditMode">
-                <Button type="submit" label="Archivovať produkt" severity="warn" size="small" outlined v-on:click="changeStatus('archived')"
-                    :loading="loading" />
+                <Button v-if="product.product_status.name != 'archived'" type="submit" label="Archivovať produkt" severity="warn" size="small" outlined
+                    v-on:click="changeStatus('archived')" :loading="loading" />
             </div>
 
             <hr class="mt-3 mb-5" />
@@ -163,8 +163,9 @@ onMounted(async () => {
 
                 <!-- Akcie -->
                 <div class="flex justify-end gap-3">
-                    <Button type="reset" label="Zrušiť" severity="secondary" outlined />
-                    <Button type="submit" label="Uložiť produkt" severity="primary" :loading="loading" />
+                    <Button type="submit" label="Zrušiť" severity="secondary" outlined
+                        v-on:click="router.push({ name: 'products.index' })"></Button>
+                    <Button type="submit" label="Uložiť produkt" severity="primary" :loading="loading"></Button>
                 </div>
             </form>
         </div>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, nextTick } from 'vue';
 import BreadcrumbDefault from '@/components/Breadcrumbs/BreadcrumbDefault.vue';
 import DefaultLayout from '@/layouts/DefaultLayout.vue';
 import { useToast } from 'vue-toast-notification';
@@ -48,11 +48,24 @@ const search = (event: any) => {
 };
 
 const getSeverity = (param: string) => {
-  return param;
+  switch (param) {
+    case 'archived':
+      return 'warn';
+    case 'blocked':
+      return 'danger';
+    default:
+      return 'success';
+  }
 };
 
-const editProduct = (productId: number) => {
-  router.push(`/product/edit/${productId}`);
+const editProduct = async (productId: string | number | undefined) => {
+  if (!productId) {
+    console.error("Chyba: Product ID je neplatné!");
+    return;
+  }
+
+  await nextTick();
+  router.push(`/product/edit/${Number(productId)}`);
 };
 
 onMounted(async () => {
@@ -107,15 +120,16 @@ onMounted(async () => {
           </template>
         </Column>
         <Column header="Status">
-          <template #body="">
-            <Tag :value="'aktívny'" :severity="getSeverity('test')" />
+          <template #body="slotProps">
+            <Tag v-if="slotProps.data.product_status" :value="slotProps.data.product_status.name"
+              :severity="getSeverity(slotProps.data.product_status.identifier)" />
+            <span v-else class="text-gray-400">Neznámy stav</span>
           </template>
         </Column>
         <Column header="Akcie">
           <template #body="slotProps">
             <div class="flex gap-2">
-              <Button icon="pi pi-pencil" label="Upraviť" @click="editProduct(slotProps.data.id)" />
-              <Button icon="pi pi-pencil" label="Upraviť" @click="editProduct(slotProps.data.id)" />
+              <Button icon="pi pi-pencil" v-on:click="editProduct(slotProps.data.id)" raised size="small"></Button>
             </div>
           </template>
         </Column>

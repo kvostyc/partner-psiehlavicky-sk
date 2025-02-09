@@ -10,6 +10,8 @@ interface Product {
     shop_id: number | null;
     category: string | null;
     tags: string[];
+    product_status: string[];
+    product_status_id: number| null;
     created_at?: string;
     updated_at?: string;
 }
@@ -23,6 +25,8 @@ export function useProduct() {
         shop_id: null,
         category: null,
         tags: [],
+        product_status: [],
+        product_status_id: null,
     });
 
     const validationErrors = ref<Record<string, string[]>>({});
