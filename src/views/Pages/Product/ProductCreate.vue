@@ -92,7 +92,6 @@ const changeStatus = async (identifier: string) => {
 
 const totalSize = ref(0);
 const totalSizePercent = ref(0);
-const files = ref<FileList>();
 
 const onRemoveTemplatingFile = (file: string, removeFileCallback: CallableFunction, index: number) => {
     removeFileCallback(index);
@@ -132,12 +131,29 @@ const uploadProductFiles = async () => {
     toast.add({ severity: "info", summary: "Success", detail: "File Uploaded", life: 3000 });
 };
 
+const urlToFile = async (url: string, filename: string) => {
+    const response = await fetch(url);
+    const blob = await response.blob();
+    return new File([blob], filename, { type: blob.type });
+};
+
+const convertImagesToFiles = async () => {
+    const filePromises = files.value.map(file => urlToFile(file.url, file.name));
+    files.value = await Promise.all(filePromises);
+};
+
 onMounted(async () => {
     await fetchShops();
     if (isEditMode.value) {
         await fetchProductById(Number(productId.value));
         await fetchImages(Number(productId.value));
-        files = images;
+        console.log(images.value.forEach(async function (image) {
+            if (image) {
+                let file = await urlToFile(image, image);
+
+                console.log(file);
+            }
+        }));
     }
 });
 </script>
