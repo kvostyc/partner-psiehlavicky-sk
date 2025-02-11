@@ -18,7 +18,18 @@ const router = useRouter();
 const productId = computed(() => route.params.id);
 const isEditMode = computed(() => !!productId.value);
 
-const { createProduct, updateProduct, fetchProductById, loading, validationErrors, product, changeProductStatus } = useProduct();
+const {
+    createProduct,
+    updateProduct,
+    fetchProductById,
+    loading,
+    validationErrors,
+    product,
+    changeProductStatus,
+    images,
+    uploadImages,
+    fetchImages
+} = useProduct();
 const { shops, fetchShops } = useShop();
 
 const pageTitle = computed(() => (isEditMode.value ? 'Upraviť produkt' : 'Vytvoriť produkt'));
@@ -37,7 +48,7 @@ const submitForm = async () => {
         } else {
             const response = await createProduct(product.value);
             await nextTick();
-            router.push(`/product/edit/${Number(response.data.id)}`);
+            router.push(`/product/edit/${Number(response?.data.id)}`);
         }
 
         if (Object.keys(validationErrors.value).length > 0) {
@@ -81,7 +92,7 @@ const changeStatus = async (identifier: string) => {
 
 const totalSize = ref(0);
 const totalSizePercent = ref(0);
-const files = ref([]);
+const files = ref<FileList>();
 
 const onRemoveTemplatingFile = (file: string, removeFileCallback: CallableFunction, index: number) => {
     removeFileCallback(index);
@@ -101,10 +112,6 @@ const uploadEvent = (callback: CallableFunction) => {
     callback();
 };
 
-const onTemplatedUpload = () => {
-    toast.add({ severity: "info", summary: "Success", detail: "File Uploaded", life: 3000 });
-};
-
 const formatSize = (bytes: number) => {
     const k = 1024;
     const dm = 3;
@@ -120,10 +127,17 @@ const formatSize = (bytes: number) => {
     return `${formattedSize} ${sizes[i]}`;
 };
 
+const uploadProductFiles = async () => {
+    await uploadImages(Number(productId.value), files.value);
+    toast.add({ severity: "info", summary: "Success", detail: "File Uploaded", life: 3000 });
+};
+
 onMounted(async () => {
     await fetchShops();
     if (isEditMode.value) {
         await fetchProductById(Number(productId.value));
+        await fetchImages(Number(productId.value));
+        files = images;
     }
 });
 </script>
@@ -156,7 +170,7 @@ onMounted(async () => {
                 <Tabs v-model:value="value">
                     <TabList>
                         <Tab value="0">Základné nastavenia</Tab>
-                        <Tab value="1">Multimédia</Tab>
+                        <Tab value="1" v-if="isEditMode">Multimédia</Tab>
                         <Tab value="2">Popis</Tab>
                     </TabList>
                     <TabPanels>
@@ -220,18 +234,18 @@ onMounted(async () => {
                                 </div>
                             </div>
                         </TabPanel>
-                        <TabPanel value="1">
+                        <TabPanel value="1" v-if="isEditMode">
                             <div class="card">
                                 <Toast />
-                                <FileUpload name="demo[]" url="/api/upload" @upload="onTemplatedUpload($event)"
-                                    :multiple="true" accept="image/*" :maxFileSize="1000000" @select="onSelectedFiles">
-                                    <template #header="{ chooseCallback, uploadCallback, clearCallback, files }">
+                                <FileUpload name="demo[]" :multiple="true" accept="image/*" :maxFileSize="1000000"
+                                    @select="onSelectedFiles">
+                                    <template #header="{ chooseCallback, clearCallback, files }">
                                         <div class="flex flex-wrap justify-between items-center flex-1 gap-4">
                                             <div class="flex gap-2">
                                                 <Button @click="chooseCallback()" icon="pi pi-images" rounded outlined
                                                     severity="secondary"></Button>
-                                                <Button @click="uploadEvent(uploadCallback)" icon="pi pi-cloud-upload"
-                                                    rounded outlined severity="success"
+                                                <Button @click="uploadEvent(uploadProductFiles)"
+                                                    icon="pi pi-cloud-upload" rounded outlined severity="success"
                                                     :disabled="!files || files.length === 0"></Button>
                                                 <Button @click="clearCallback()" icon="pi pi-times" rounded outlined
                                                     severity="danger" :disabled="!files || files.length === 0"></Button>
