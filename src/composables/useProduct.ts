@@ -187,7 +187,7 @@ export function useProduct() {
         error.value = null;
 
         try {
-            return await axiosInstance.delete(`/product/${id}/image/${image_id}/set-main`);
+            return await axiosInstance.get(`/product/${id}/image/${image_id}/set-main`);
         } catch (err: any) {
             error.value = err.message || 'Chyba pri nahrávaní obrázkov';
         } finally {

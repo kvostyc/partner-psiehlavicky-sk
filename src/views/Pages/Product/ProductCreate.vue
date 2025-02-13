@@ -51,8 +51,10 @@ const submitForm = async () => {
             await updateProduct(Number(productId.value));
         } else {
             const response = await createProduct(product.value);
-            await nextTick();
-            router.push(`/product/edit/${Number(response?.data.id)}`);
+            if (response) {
+                await nextTick();
+                router.push(`/product/edit/${Number(response?.data.id)}`);
+            }
         }
 
         if (Object.keys(validationErrors.value).length > 0) {
@@ -152,13 +154,10 @@ onMounted(async () => {
     await fetchShops();
     await fetchProductTags();
 
-    console.log(productTags);
-
     if (isEditMode.value) {
         await fetchProductById(Number(productId.value));
         const response = await fetchImages(Number(productId.value));
         uploadedFiles.value = response?.data;
-        console.log(files.value);
     }
 });
 </script>
@@ -268,10 +267,12 @@ onMounted(async () => {
                                     v-if="images.length > 0">
                                     <div v-for="(image, index) of images" :key="index" class="relative">
                                         <div class="absolute top-0 right-0 flex gap-2">
-                                            <Button v-if="!image.main" @click="setMainProductImage(image.id)" icon="pi pi-thumbtack" rounded size="small"
-                                                outlined style="cursor: pointer;" severity="warn"></Button>
-                                            <Button @click="deleteProductImage(image.id)" icon="pi pi-times" rounded size="small"
-                                                outlined style="cursor: pointer;" severity="danger"></Button>
+                                            <Button v-if="!image.main" @click="setMainProductImage(image.id)"
+                                                icon="pi pi-thumbtack" rounded size="small" outlined
+                                                style="cursor: pointer;" severity="warn"></Button>
+                                            <Button @click="deleteProductImage(image.id)" icon="pi pi-times" rounded
+                                                size="small" outlined style="cursor: pointer;"
+                                                severity="danger"></Button>
                                         </div>
                                         <img :src="image.url" v-bind:key="index">
                                     </div>
