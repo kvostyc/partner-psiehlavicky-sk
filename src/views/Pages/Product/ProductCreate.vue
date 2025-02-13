@@ -3,13 +3,14 @@ import { onMounted, ref, computed, nextTick } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import BreadcrumbDefault from '@/components/Breadcrumbs/BreadcrumbDefault.vue';
 import DefaultLayout from '@/layouts/DefaultLayout.vue';
-import { InputText, Textarea, Button, Toast, Tabs, TabList, Tab, TabPanels, TabPanel, Dropdown, FileUpload, ProgressBar, Badge } from 'primevue';
+import { InputText, Textarea, Button, Toast, Tabs, TabList, Tab, TabPanels, TabPanel, Dropdown, FileUpload, ProgressBar, Badge, MultiSelect } from 'primevue';
 import { useToast } from "primevue/usetoast";
 const toast = useToast();
 import { useProduct } from '@/composables/useProduct';
 import ErrorMessage from '@/components/Error/Input/ErrorMessage.vue';
 import { useShop } from '@/composables/useShop';
 import { usePrimeVue } from 'primevue/config';
+import { useProductTag } from '@/composables/useProductTags';
 
 const $primevue = usePrimeVue();
 
@@ -25,11 +26,14 @@ const {
     loading,
     validationErrors,
     product,
-    changeProductStatus,
     images,
+    changeProductStatus,
     uploadImages,
-    fetchImages
+    fetchImages,
+    deleteImage,
+    setMainImage,
 } = useProduct();
+const { productTags, fetchProductTags } = useProductTag();
 const { shops, fetchShops } = useShop();
 
 const pageTitle = computed(() => (isEditMode.value ? 'Upraviť produkt' : 'Vytvoriť produkt'));
@@ -39,7 +43,7 @@ const categories = ref([
     { name: 'Oblečenie', id: 2 }
 ]);
 
-const value = ref('1');
+const value = ref('0');
 
 const submitForm = async () => {
     try {
@@ -92,6 +96,8 @@ const changeStatus = async (identifier: string) => {
 
 const totalSize = ref(0);
 const totalSizePercent = ref(0);
+const files = ref([]);
+const uploadedFiles = ref([]);
 
 const onRemoveTemplatingFile = (file: string, removeFileCallback: CallableFunction, index: number) => {
     removeFileCallback(index);
@@ -128,32 +134,31 @@ const formatSize = (bytes: number) => {
 
 const uploadProductFiles = async () => {
     await uploadImages(Number(productId.value), files.value);
+    await fetchImages(Number(productId.value));
     toast.add({ severity: "info", summary: "Success", detail: "File Uploaded", life: 3000 });
 };
 
-const urlToFile = async (url: string, filename: string) => {
-    const response = await fetch(url);
-    const blob = await response.blob();
-    return new File([blob], filename, { type: blob.type });
+const deleteProductImage = async (index: any) => {
+    await deleteImage(Number(productId.value), Number(index));
+    await fetchImages(Number(productId.value));
 };
 
-const convertImagesToFiles = async () => {
-    const filePromises = files.value.map(file => urlToFile(file.url, file.name));
-    files.value = await Promise.all(filePromises);
+const setMainProductImage = async (index: any) => {
+    await setMainImage(Number(productId.value), index);
+    await fetchImages(Number(productId.value));
 };
 
 onMounted(async () => {
     await fetchShops();
+    await fetchProductTags();
+
+    console.log(productTags);
+
     if (isEditMode.value) {
         await fetchProductById(Number(productId.value));
-        await fetchImages(Number(productId.value));
-        console.log(images.value.forEach(async function (image) {
-            if (image) {
-                let file = await urlToFile(image, image);
-
-                console.log(file);
-            }
-        }));
+        const response = await fetchImages(Number(productId.value));
+        uploadedFiles.value = response?.data;
+        console.log(files.value);
     }
 });
 </script>
@@ -191,8 +196,8 @@ onMounted(async () => {
                     </TabList>
                     <TabPanels>
                         <TabPanel value="0">
-                            <div>
-                                <h2 class="text-lg font-semibold text-gray-800 mb-3">Identifikátory</h2>
+                            <div class="mt-5 mb-2">
+                                <h2 class="text-xl font-semibold text-gray-800 mb-2">Identifikátory</h2>
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <div class="flex flex-col gap-2">
                                         <label for="product_code" class="font-medium text-gray-700">Kód produktu</label>
@@ -213,8 +218,8 @@ onMounted(async () => {
                             </div>
 
                             <!-- Sekcia: Základné informácie -->
-                            <div>
-                                <h2 class="text-lg font-semibold text-gray-800 mb-3">Základné informácie</h2>
+                            <div class="mt-5 mb-2">
+                                <h2 class="text-xl font-semibold text-gray-800 mb-2">Základné informácie</h2>
                                 <div class="flex flex-col gap-2">
                                     <label for="name" class="font-medium text-gray-700">Názov produktu</label>
                                     <InputText id="name" v-model="product.name" placeholder="Zadajte názov"
@@ -230,8 +235,8 @@ onMounted(async () => {
                             </div>
 
                             <!-- Sekcia: Kategorizácia -->
-                            <div>
-                                <h2 class="text-lg font-semibold text-gray-800 mb-3">Kategorizácia</h2>
+                            <div class="mt-5 mb-2">
+                                <h2 class="text-xl font-semibold text-gray-800 mb-2">Kategorizácia</h2>
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <div class="flex flex-col gap-2">
                                         <label for="shop_id" class="font-medium text-gray-700">Obchod</label>
@@ -247,12 +252,30 @@ onMounted(async () => {
                                             optionLabel="name" optionValue="id" placeholder="Vyber kategóriu"
                                             class="w-full" />
                                     </div>
+                                    <div class="flex flex-col gap-2">
+                                        <label for="category" class="font-medium text-gray-700">Tagy</label>
+                                        <MultiSelect v-model="product.tags" :options="productTags" optionLabel="name"
+                                            optionValue="id" filter placeholder="Select Tags" :maxSelectedLabels="3"
+                                            class="w-full md:w-80" />
+                                    </div>
                                 </div>
                             </div>
+
                         </TabPanel>
                         <TabPanel value="1" v-if="isEditMode">
                             <div class="card">
-                                <Toast />
+                                <div class="grid grid-cols-4 sm:grid-cols-6 lg:grid-cols-8 gap-4 my-5 border p-2 rounded-lg"
+                                    v-if="images.length > 0">
+                                    <div v-for="(image, index) of images" :key="index" class="relative">
+                                        <div class="absolute top-0 right-0 flex gap-2">
+                                            <Button v-if="!image.main" @click="setMainProductImage(image.id)" icon="pi pi-thumbtack" rounded size="small"
+                                                outlined style="cursor: pointer;" severity="warn"></Button>
+                                            <Button @click="deleteProductImage(image.id)" icon="pi pi-times" rounded size="small"
+                                                outlined style="cursor: pointer;" severity="danger"></Button>
+                                        </div>
+                                        <img :src="image.url" v-bind:key="index">
+                                    </div>
+                                </div>
                                 <FileUpload name="demo[]" :multiple="true" accept="image/*" :maxFileSize="1000000"
                                     @select="onSelectedFiles">
                                     <template #header="{ chooseCallback, clearCallback, files }">

@@ -21,6 +21,12 @@ interface ProductStatus {
     identifier: string;
 }
 
+interface ProductImage {
+    id: number;
+    url: string;
+    main?: boolean;
+}
+
 export function useProduct() {
     const product = ref<Product>({
         name: '',
@@ -40,7 +46,7 @@ export function useProduct() {
 
     const validationErrors = ref<Record<string, string[]>>({});
     const products = ref<Product[]>([]);
-    const images = ref<string[]>([]); // URL obrázkov produktu
+    const images = ref<ProductImage[]>([]); // URL obrázkov produktu
     const loading = ref(false);
     const error = ref<string | null>(null);
 
@@ -143,7 +149,7 @@ export function useProduct() {
         }
     };
 
-    const uploadImages = async (id: number, files: FileList) => {
+    const uploadImages = async (id: number, files: File) => {
         loading.value = true;
         error.value = null;
 
@@ -156,6 +162,32 @@ export function useProduct() {
             formData.append('product_id', id.toString());
 
             return await axiosInstance.post(`/product/${id}/images`, formData);
+        } catch (err: any) {
+            error.value = err.message || 'Chyba pri nahrávaní obrázkov';
+        } finally {
+            loading.value = false;
+        }
+    };
+
+    const deleteImage = async (id: number, image_id: number) => {
+        loading.value = true;
+        error.value = null;
+
+        try {
+            return await axiosInstance.delete(`/product/${id}/image/${image_id}/delete`);
+        } catch (err: any) {
+            error.value = err.message || 'Chyba pri nahrávaní obrázkov';
+        } finally {
+            loading.value = false;
+        }
+    };
+
+    const setMainImage = async (id: number, image_id: number) => {
+        loading.value = true;
+        error.value = null;
+
+        try {
+            return await axiosInstance.delete(`/product/${id}/image/${image_id}/set-main`);
         } catch (err: any) {
             error.value = err.message || 'Chyba pri nahrávaní obrázkov';
         } finally {
@@ -178,5 +210,7 @@ export function useProduct() {
         changeProductStatus,
         fetchImages,
         uploadImages,
+        deleteImage,
+        setMainImage,
     };
 }
