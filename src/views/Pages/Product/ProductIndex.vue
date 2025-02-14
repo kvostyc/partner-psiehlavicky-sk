@@ -11,13 +11,14 @@ import Paginator from 'primevue/paginator';
 import { AutoComplete } from 'primevue';
 import { useProduct } from '@/composables/useProduct';
 import router from '@/router';
+import { set } from '@vueuse/core';
 
 const $toast = useToast();
 
 const pageTitle = ref('Moje produkty');
 const value = ref("");
 
-const { products, fetchProducts, loading } = useProduct();
+const { products, loading, fetchProducts, getMainImage } = useProduct();
 
 const searchResults = ref<Product[]>([]);
 
@@ -68,9 +69,28 @@ const editProduct = async (productId: string | number | undefined) => {
   router.push(`/product/edit/${Number(productId)}`);
 };
 
+const loadMainImages = async () => {
+  if (!products.value.length) return;
+
+  for (const product of products.value) {
+    try {
+      const response = await getMainImage(Number(product.id));
+      set(product, 'main_image', response?.data.url);
+    } catch (error) {
+      set(product, 'main_image', 'https://placehold.co/400');
+    }
+  }
+};
+
+const loadProducts = async () => {
+  await fetchProducts();
+  await loadMainImages();
+};
+
+
 onMounted(async () => {
   try {
-    await fetchProducts();
+    await loadProducts();
   } catch (error) {
     $toast.error("Vyskytla sa chyba pri načítavaní produktov.");
   }
@@ -99,7 +119,7 @@ onMounted(async () => {
               </div>
             </div>
             <div class="flex gap-2">
-              <Button label="Refresh" icon="pi pi-refresh" rounded raised @click="fetchProducts"
+              <Button label="Refresh" icon="pi pi-refresh" rounded raised @click="loadProducts"
                 :loading="loading"></Button>
               <Button label="Vytvoriť produkt" icon="pi pi-plus" rounded raised :loading="loading" as="router-link"
                 to="/product/create"></Button>
@@ -110,7 +130,8 @@ onMounted(async () => {
         <Column field="ean" header="Ean"></Column>
         <Column header="Image">
           <template #body="slotProps">
-            <img :src="`https://placehold.co/400`" :alt="slotProps.data.image" class="w-24 rounded" />
+            <img :src="slotProps.data.main_image || 'https://placehold.co/400'" :alt="slotProps.data.name"
+              class="w-24 rounded" />
           </template>
         </Column>
         <Column field="category" header="Category"></Column>

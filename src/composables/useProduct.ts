@@ -14,6 +14,7 @@ interface Product {
     product_status_id: number | null;
     created_at?: string;
     updated_at?: string;
+    main_image?: string;
 }
 
 interface ProductStatus {
@@ -195,6 +196,19 @@ export function useProduct() {
         }
     };
 
+    const getMainImage = async (id: number) => {
+        loading.value = true;
+        error.value = null;
+
+        try {
+            return await axiosInstance.get(`/product/${id}/image/get-main`);
+        } catch (err: any) {
+            error.value = err.message || 'Chyba pri nahrávaní obrázkov';
+        } finally {
+            loading.value = false;
+        }  
+    };
+
     return {
         product,
         products,
@@ -212,5 +226,6 @@ export function useProduct() {
         uploadImages,
         deleteImage,
         setMainImage,
+        getMainImage,
     };
 }
