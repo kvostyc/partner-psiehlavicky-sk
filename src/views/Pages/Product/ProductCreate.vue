@@ -3,7 +3,7 @@ import { onMounted, ref, computed, nextTick } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import BreadcrumbDefault from '@/components/Breadcrumbs/BreadcrumbDefault.vue';
 import DefaultLayout from '@/layouts/DefaultLayout.vue';
-import { InputText, Textarea, Button, Toast, Tabs, TabList, Tab, TabPanels, TabPanel, Dropdown, FileUpload, ProgressBar, Badge, MultiSelect } from 'primevue';
+import { InputText, Textarea, Button, Toast, Tabs, TabList, Tab, TabPanels, TabPanel, Dropdown, FileUpload, ProgressBar, Badge, MultiSelect, Chip } from 'primevue';
 import { useToast } from "primevue/usetoast";
 const toast = useToast();
 import { useProduct } from '@/composables/useProduct';
@@ -85,7 +85,8 @@ const submitForm = async () => {
 
 const changeStatus = async (identifier: string) => {
     try {
-        changeProductStatus(Number(productId.value), identifier)
+        await changeProductStatus(Number(productId.value), identifier)
+        await fetchProductById(Number(productId.value));
     } catch (error: any) {
         toast.add({
             severity: 'error',
@@ -176,13 +177,23 @@ onMounted(async () => {
                     </p>
                 </div>
 
-                <div class="flex justify-end items-center gap-2" v-if="isEditMode">
-                    <Button v-if="!loading && product.product_status?.identifier != 'archived'" type="submit"
-                        label="Archivovať produkt" severity="warn" size="small" outlined
-                        v-on:click="changeStatus('archived')" :loading="loading" />
-                    <Button v-if="!loading && product.product_status?.identifier != 'active'" type="submit"
-                        label="Aktivovať produkt" severity="success" size="small" outlined
-                        v-on:click="changeStatus('active')" :loading="loading" />
+                <div class="w-full border rounded-md p-2" v-cloak>
+                    <div class="flex justify-end items-center gap-2" v-if="isEditMode">
+                        <Button v-if="!loading && product.product_status?.identifier != 'archived'" type="submit"
+                            label="Archivovať produkt" severity="warn" size="large" outlined
+                            v-on:click="changeStatus('archived')" :loading="loading" />
+                        <Button v-if="!loading && product.product_status?.identifier != 'active'" type="submit"
+                            label="Publikovať produkt" severity="success" size="large" outlined
+                            v-on:click="changeStatus('active')" :loading="loading" />
+                    </div>
+                    <div class="w-full flex justify-end mt-2">
+                        <template v-if="product.external_id">
+                            <Chip label='"External (shop) ID: " + product.external_id"' icon="pi pi-id-card" size="small" />
+                        </template>
+                        <template v-if="!product.external_id">
+                            <Chip label="External (shop) ID: nepriradené" icon="pi pi-id-card" size="small" />
+                        </template>
+                    </div>
                 </div>
 
                 <hr class="mt-3 mb-5" />
