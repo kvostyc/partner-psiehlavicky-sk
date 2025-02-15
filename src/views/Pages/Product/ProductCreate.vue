@@ -3,7 +3,7 @@ import { onMounted, ref, computed, nextTick } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import BreadcrumbDefault from '@/components/Breadcrumbs/BreadcrumbDefault.vue';
 import DefaultLayout from '@/layouts/DefaultLayout.vue';
-import { InputText, Textarea, Button, Toast, Tabs, TabList, Tab, TabPanels, TabPanel, Dropdown, FileUpload, ProgressBar, Badge, MultiSelect, Chip } from 'primevue';
+import { InputText, Textarea, Button, Toast, Tabs, TabList, Tab, TabPanels, TabPanel, Dropdown, FileUpload, ProgressBar, Badge, MultiSelect, Chip, Select } from 'primevue';
 import { useToast } from "primevue/usetoast";
 const toast = useToast();
 import { useProduct } from '@/composables/useProduct';
@@ -41,6 +41,22 @@ const pageTitle = computed(() => (isEditMode.value ? 'Upraviť produkt' : 'Vytvo
 const categories = ref([
     { name: 'Elektronika', id: 1 },
     { name: 'Oblečenie', id: 2 }
+]);
+
+const colors = ref([
+    { name: 'New York', code: 'NY' },
+    { name: 'Rome', code: 'RM' },
+    { name: 'London', code: 'LDN' },
+    { name: 'Istanbul', code: 'IST' },
+    { name: 'Paris', code: 'PRS' }
+]);
+
+const sizes = ref([
+    { name: 'New York', code: 'NY' },
+    { name: 'Rome', code: 'RM' },
+    { name: 'London', code: 'LDN' },
+    { name: 'Istanbul', code: 'IST' },
+    { name: 'Paris', code: 'PRS' }
 ]);
 
 const value = ref('0');
@@ -266,6 +282,23 @@ onMounted(async () => {
                                         <MultiSelect v-model="product.tags" :options="productTags" optionLabel="name"
                                             optionValue="id" filter placeholder="Select Tags" :maxSelectedLabels="3"
                                             class="w-full" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Sekcia: Variant -->
+                            <div class="mt-5 mb-2">
+                                <h2 class="text-xl font-semibold text-gray-800 mb-2">Variant</h2>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div class="flex flex-col gap-2">
+                                        <label for="category" class="font-medium text-gray-700">Veľkosť</label>
+                                        <Select v-model="selectedCity" editable :options="cities" optionLabel="name"
+                                            placeholder="Select a City" class="w-full" />
+                                    </div>
+                                    <div class="flex flex-col gap-2">
+                                        <label for="category" class="font-medium text-gray-700">Farba</label>
+                                        <Select v-model="selectedCity" editable :options="cities" optionLabel="name"
+                                            placeholder="Select a City" class="w-full" />
                                     </div>
                                 </div>
                             </div>
