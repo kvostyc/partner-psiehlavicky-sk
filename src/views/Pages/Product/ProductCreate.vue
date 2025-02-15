@@ -169,7 +169,7 @@ onMounted(async () => {
         <form @submit.prevent="submitForm" class="space-y-6">
             <BreadcrumbDefault :pageTitle="pageTitle" />
 
-            <div class="bg-gray-50 rounded-md py-10 px-6">
+            <div class="bg-gray-50 rounded-md py-10 px-6 min-w-[1000px]">
                 <div class="flex flex-col text-center w-full mb-10">
                     <h1 class="sm:text-3xl text-2xl font-semibold title-font text-gray-900">{{ pageTitle }}</h1>
                     <p class="lg:w-2/3 mx-auto leading-relaxed text-sm text-gray-500">
@@ -188,7 +188,8 @@ onMounted(async () => {
                     </div>
                     <div class="w-full flex justify-end mt-2">
                         <template v-if="product.external_id">
-                            <Chip label='"External (shop) ID: " + product.external_id"' icon="pi pi-id-card" size="small" />
+                            <Chip label='"External (shop) ID: " + product.external_id"' icon="pi pi-id-card"
+                                size="small" />
                         </template>
                         <template v-if="!product.external_id">
                             <Chip label="External (shop) ID: nepriradené" icon="pi pi-id-card" size="small" />
@@ -203,9 +204,32 @@ onMounted(async () => {
                         <Tab value="0">Základné nastavenia</Tab>
                         <Tab value="1" v-if="isEditMode">Multimédia</Tab>
                         <Tab value="2">Popis</Tab>
+                        <Tab value="3">Skladová dostupnosť</Tab>
                     </TabList>
                     <TabPanels>
                         <TabPanel value="0">
+                            <!-- Sekcia: Základné informácie -->
+                            <div class="mt-5 mb-2">
+                                <h2 class="text-xl font-semibold text-gray-800 mb-2">Základné informácie</h2>
+                                <div class="flex flex-col gap-2">
+                                    <label for="name" class="font-medium text-gray-700">Názov produktu</label>
+                                    <InputText id="name" v-model="product.name" placeholder="Zadajte názov"
+                                        class="w-full" :invalid="Array.isArray(validationErrors.name)" />
+
+                                    <ErrorMessage :errors="validationErrors.name" />
+                                </div>
+                            </div>
+                            <div class="mt-5 mb-2">
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div class="flex flex-col gap-2">
+                                        <label for="name" class="font-medium text-gray-700">Cena</label>
+                                        <InputText id="name" v-model="product.name" placeholder="Zadajte názov"
+                                            class="w-full" :invalid="Array.isArray(validationErrors.name)" />
+                                        <ErrorMessage :errors="validationErrors.name" />
+                                    </div>
+                                </div>
+                            </div>
+
                             <div class="mt-5 mb-2">
                                 <h2 class="text-xl font-semibold text-gray-800 mb-2">Identifikátory</h2>
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -227,35 +251,10 @@ onMounted(async () => {
                                 </div>
                             </div>
 
-                            <!-- Sekcia: Základné informácie -->
-                            <div class="mt-5 mb-2">
-                                <h2 class="text-xl font-semibold text-gray-800 mb-2">Základné informácie</h2>
-                                <div class="flex flex-col gap-2">
-                                    <label for="name" class="font-medium text-gray-700">Názov produktu</label>
-                                    <InputText id="name" v-model="product.name" placeholder="Zadajte názov"
-                                        class="w-full" :invalid="Array.isArray(validationErrors.name)" />
-
-                                    <ErrorMessage :errors="validationErrors.name" />
-                                </div>
-                                <div class="flex flex-col gap-2 mt-4">
-                                    <label for="free_description" class="font-medium text-gray-700">Popis</label>
-                                    <Textarea id="free_description" v-model="product.free_description" rows="3"
-                                        placeholder="Krátky popis" class="w-full" />
-                                </div>
-                            </div>
-
                             <!-- Sekcia: Kategorizácia -->
                             <div class="mt-5 mb-2">
                                 <h2 class="text-xl font-semibold text-gray-800 mb-2">Kategorizácia</h2>
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    <div class="flex flex-col gap-2">
-                                        <label for="shop_id" class="font-medium text-gray-700">Obchod</label>
-                                        <Dropdown id="shop_id" v-model="product.shop_id" :options="shops"
-                                            placeholder="Vyber obchod" optionLabel="name" optionValue="id"
-                                            class="w-full" :invalid="Array.isArray(validationErrors.shop_id)" />
-
-                                        <ErrorMessage :errors="validationErrors.shop_id" />
-                                    </div>
                                     <div class="flex flex-col gap-2">
                                         <label for="category" class="font-medium text-gray-700">Kategória</label>
                                         <Dropdown id="category" v-model="product.category" :options="categories"
@@ -266,7 +265,22 @@ onMounted(async () => {
                                         <label for="category" class="font-medium text-gray-700">Tagy</label>
                                         <MultiSelect v-model="product.tags" :options="productTags" optionLabel="name"
                                             optionValue="id" filter placeholder="Select Tags" :maxSelectedLabels="3"
-                                            class="w-full md:w-80" />
+                                            class="w-full" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mt-5 mb-2">
+                                <h2 class="text-xl font-semibold text-gray-800 mb-2">Obchod</h2>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div class="flex flex-col gap-2">
+                                        <label for="shop_id" class="font-medium text-gray-700">Priradené ku
+                                            obchodu</label>
+                                        <Dropdown id="shop_id" v-model="product.shop_id" :options="shops"
+                                            placeholder="Vyber obchod" optionLabel="name" optionValue="id"
+                                            class="w-full" :invalid="Array.isArray(validationErrors.shop_id)" />
+
+                                        <ErrorMessage :errors="validationErrors.shop_id" />
                                     </div>
                                 </div>
                             </div>
@@ -366,7 +380,17 @@ onMounted(async () => {
                             </div>
                         </TabPanel>
                         <TabPanel value="2">
-
+                            <div class="flex flex-col gap-2 mt-4">
+                                <label for="free_description" class="font-medium text-gray-700">Krátky popis pod názvom
+                                    produktu</label>
+                                <Textarea id="free_description" v-model="product.free_description" rows="3"
+                                    placeholder="Krátky popis" class="w-full" />
+                            </div>
+                            <div class="flex flex-col gap-2 mt-4">
+                                <label for="free_description" class="font-medium text-gray-700">Dlhý popis</label>
+                                <Textarea id="free_description" v-model="product.free_description" rows="3"
+                                    placeholder="Krátky popis" class="w-full" />
+                            </div>
                         </TabPanel>
                     </TabPanels>
                 </Tabs>
