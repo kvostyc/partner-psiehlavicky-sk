@@ -16,6 +16,8 @@ interface Product {
     updated_at?: string;
     main_image?: string;
     external_id?: number | null;
+    size: string;
+    color: string;
 }
 
 interface ProductStatus {
@@ -45,6 +47,8 @@ export function useProduct() {
         },
         product_status_id: null,
         external_id: null,
+        size: '',
+        color: '',
     });
 
     const validationErrors = ref<Record<string, string[]>>({});

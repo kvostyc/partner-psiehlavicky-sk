@@ -44,19 +44,17 @@ const categories = ref([
 ]);
 
 const colors = ref([
-    { name: 'New York', code: 'NY' },
-    { name: 'Rome', code: 'RM' },
-    { name: 'London', code: 'LDN' },
-    { name: 'Istanbul', code: 'IST' },
-    { name: 'Paris', code: 'PRS' }
+    { name: 'Biela' },
+    { name: 'Čierna' },
+    { name: 'Zlatá' },
+    { name: 'Strieborná' },
+    { name: 'Bronzová' },
 ]);
 
 const sizes = ref([
-    { name: 'New York', code: 'NY' },
-    { name: 'Rome', code: 'RM' },
-    { name: 'London', code: 'LDN' },
-    { name: 'Istanbul', code: 'IST' },
-    { name: 'Paris', code: 'PRS' }
+    { name: 'M' },
+    { name: 'L' },
+    { name: 'XL' },
 ]);
 
 const value = ref('0');
@@ -291,13 +289,13 @@ onMounted(async () => {
                                 <h2 class="text-xl font-semibold text-gray-800 mb-2">Variant</h2>
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <div class="flex flex-col gap-2">
-                                        <label for="category" class="font-medium text-gray-700">Veľkosť</label>
-                                        <Select v-model="selectedCity" editable :options="cities" optionLabel="name"
+                                        <label for="category" class="font-medium text-gray-700">Farba</label>
+                                        <Select v-model="product.color" editable :options="colors" optionLabel="name"
                                             placeholder="Select a City" class="w-full" />
                                     </div>
                                     <div class="flex flex-col gap-2">
-                                        <label for="category" class="font-medium text-gray-700">Farba</label>
-                                        <Select v-model="selectedCity" editable :options="cities" optionLabel="name"
+                                        <label for="category" class="font-medium text-gray-700">Veľkosť</label>
+                                        <Select v-model="product.size" editable :options="sizes" optionLabel="name"
                                             placeholder="Select a City" class="w-full" />
                                     </div>
                                 </div>
