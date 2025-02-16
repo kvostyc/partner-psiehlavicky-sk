@@ -30,9 +30,15 @@ interface Product {
   free_description: string;
   shop_id: number | null;
   category: string | null;
-  tags: string[];
+  tags: [];
+  product_status_id: number | null;
   created_at?: string;
   updated_at?: string;
+  main_image?: string;
+  external_id?: number | null;
+  size: string;
+  color: string;
+  price: number | string;
 }
 
 const search = (event: any) => {
@@ -126,6 +132,7 @@ onMounted(async () => {
             </div>
           </div>
         </template>
+        <Column field="external_id" header="External ID"></Column>
         <Column field="name" header="Name"></Column>
         <Column field="ean" header="Ean"></Column>
         <Column header="Image">

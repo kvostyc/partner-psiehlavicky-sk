@@ -26,6 +26,7 @@
     "pinia": "^2.1.7",
     "primeicons": "^7.0.0",
     "primevue": "^4.2.5",
+    "pusher-js": "^8.4.0",
     "tailwindcss-primeui": "^0.4.0",
     "vue": "^3.3.11",
     "vue-filepond": "^7.0.4",

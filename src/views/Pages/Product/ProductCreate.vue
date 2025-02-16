@@ -193,21 +193,36 @@ onMounted(async () => {
 
                 <div class="w-full border rounded-md p-2" v-cloak>
                     <div class="flex justify-end items-center gap-2" v-if="isEditMode">
-                        <Button v-if="!loading && product.product_status?.identifier != 'archived' && product.external_id" type="submit"
-                            label="Archivovať produkt" severity="warn" size="large" outlined
-                            v-on:click="changeStatus('archived')" :loading="loading" />
                         <Button
-                            v-if="!loading && !product.external_id"
-                            type="submit" label="Publikovať produkt" severity="success" size="large" outlined
-                            v-on:click="changeStatus('active')" :loading="loading" />
+                            v-if="!loading && product.product_status?.identifier != 'archived' && product.external_id"
+                            type="submit" label="Archivovať produkt" severity="warn" size="large" outlined
+                            v-on:click="changeStatus('archived')" :loading="loading" />
+                        <Button v-if="!loading && !product.external_id" type="submit" label="Publikovať produkt"
+                            severity="success" size="large" outlined v-on:click="changeStatus('active')"
+                            :loading="loading" />
                     </div>
-                    <div class="w-full flex justify-end mt-2">
+                    <div class="w-full flex justify-end mt-2" v-cloak>
                         <template v-if="product.external_id">
-                            <Chip label='"External (shop) ID: " + product.external_id"' icon="pi pi-id-card"
-                                size="small" />
+                            <Chip size="small">
+                                <div class="flex gap-1 justify-center items-center">
+                                    <i class="pi pi-id-card"></i>
+                                    <b>External (shop) ID: </b>
+                                    <span>
+                                        {{ product.external_id }}
+                                    </span>
+                                </div>
+                            </Chip>
                         </template>
                         <template v-if="!product.external_id">
-                            <Chip label="External (shop) ID: nepriradené" icon="pi pi-id-card" size="small" />
+                            <Chip size="small">
+                                <div class="flex gap-1 justify-center items-center">
+                                    <i class="pi pi-id-card"></i>
+                                    <b>External (shop) ID: </b>
+                                    <span>
+                                        nepriradené
+                                    </span>
+                                </div>
+                            </Chip>
                         </template>
                     </div>
                 </div>
