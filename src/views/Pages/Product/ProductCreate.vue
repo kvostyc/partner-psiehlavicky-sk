@@ -197,7 +197,7 @@ onMounted(async () => {
                             v-if="!loading && product.product_status?.identifier != 'archived' && product.external_id"
                             type="submit" label="Archivovať produkt" severity="warn" size="large" outlined
                             v-on:click="changeStatus('archived')" :loading="loading" />
-                        <Button v-if="!loading && !product.external_id" type="submit" label="Publikovať produkt"
+                        <Button v-if="!loading /* && !product.external_id */" type="submit" label="Publikovať produkt"
                             severity="success" size="large" outlined v-on:click="changeStatus('active')"
                             :loading="loading" />
                     </div>

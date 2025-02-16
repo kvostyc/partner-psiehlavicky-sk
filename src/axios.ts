@@ -27,9 +27,21 @@ axiosInstance.interceptors.response.use(
         loadingStore.stopLoading();
         return response;
     },
-    (error) => {
+    async (error) => {
         const loadingStore = useLoadingStore();
         loadingStore.stopLoading();
+
+        if (error.response && error.response.status === 419) {
+            try {
+                await axios.get("http://localhost:8000/sanctum/csrf-cookie", {
+                    withCredentials: true,
+                });
+
+                return axiosInstance(error.config);
+            } catch (csrfError) {
+                return Promise.reject(csrfError);
+            }
+        }
 
         if (error.response && error.response.status === 401) {
             if (router.currentRoute.value.name !== "signin") {
