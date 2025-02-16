@@ -18,6 +18,7 @@ interface Product {
     external_id?: number | null;
     size: string;
     color: string;
+    price: number | string;
 }
 
 interface ProductStatus {
@@ -49,6 +50,7 @@ export function useProduct() {
         external_id: null,
         size: '',
         color: '',
+        price: 0,
     });
 
     const validationErrors = ref<Record<string, string[]>>({});
@@ -104,10 +106,16 @@ export function useProduct() {
     const updateProduct = async (id: number) => {
         loading.value = true;
         error.value = null;
+        validationErrors.value = {};
+
         try {
             return await axiosInstance.put(`/product/${id}`, product.value);
         } catch (err: any) {
-            error.value = err.message || 'Chyba pri aktualizácii produktu';
+            if (err.response && err.response.status === 422) {
+                validationErrors.value = err.response.data.errors;
+            } else {
+                error.value = err.message || 'Chyba pri vytváraní produktu';
+            }
         } finally {
             loading.value = false;
         }

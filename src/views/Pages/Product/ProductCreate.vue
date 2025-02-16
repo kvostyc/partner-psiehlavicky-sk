@@ -44,17 +44,17 @@ const categories = ref([
 ]);
 
 const colors = ref([
-    { name: 'Biela' },
-    { name: 'Čierna' },
-    { name: 'Zlatá' },
-    { name: 'Strieborná' },
-    { name: 'Bronzová' },
+    'Biela',
+    'Čierna',
+    'Zlatá',
+    'Strieborná',
+    'Bronzová',
 ]);
 
 const sizes = ref([
-    { name: 'M' },
-    { name: 'L' },
-    { name: 'XL' },
+    'Medium',
+    'Large',
+    'Extra Large',
 ]);
 
 const value = ref('0');
@@ -193,11 +193,12 @@ onMounted(async () => {
 
                 <div class="w-full border rounded-md p-2" v-cloak>
                     <div class="flex justify-end items-center gap-2" v-if="isEditMode">
-                        <Button v-if="!loading && product.product_status?.identifier != 'archived'" type="submit"
+                        <Button v-if="!loading && product.product_status?.identifier != 'archived' && product.external_id" type="submit"
                             label="Archivovať produkt" severity="warn" size="large" outlined
                             v-on:click="changeStatus('archived')" :loading="loading" />
-                        <Button v-if="!loading && product.product_status?.identifier != 'active'" type="submit"
-                            label="Publikovať produkt" severity="success" size="large" outlined
+                        <Button
+                            v-if="!loading && !product.external_id"
+                            type="submit" label="Publikovať produkt" severity="success" size="large" outlined
                             v-on:click="changeStatus('active')" :loading="loading" />
                     </div>
                     <div class="w-full flex justify-end mt-2">
@@ -237,9 +238,9 @@ onMounted(async () => {
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <div class="flex flex-col gap-2">
                                         <label for="name" class="font-medium text-gray-700">Cena</label>
-                                        <InputText id="name" v-model="product.name" placeholder="Zadajte názov"
-                                            class="w-full" :invalid="Array.isArray(validationErrors.name)" />
-                                        <ErrorMessage :errors="validationErrors.name" />
+                                        <InputText id="name" v-model="product.price" placeholder="Zadajte názov"
+                                            class="w-full" :invalid="Array.isArray(validationErrors.price)" />
+                                        <ErrorMessage :errors="validationErrors.price" />
                                     </div>
                                 </div>
                             </div>
@@ -290,13 +291,17 @@ onMounted(async () => {
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <div class="flex flex-col gap-2">
                                         <label for="category" class="font-medium text-gray-700">Farba</label>
-                                        <Select v-model="product.color" editable :options="colors" optionLabel="name"
-                                            placeholder="Select a City" class="w-full" />
+                                        <Select v-model="product.color" editable :options="colors"
+                                            :invalid="Array.isArray(validationErrors.color)" placeholder="Select a City"
+                                            class="w-full" />
+                                        <ErrorMessage :errors="validationErrors.color" />
                                     </div>
                                     <div class="flex flex-col gap-2">
                                         <label for="category" class="font-medium text-gray-700">Veľkosť</label>
-                                        <Select v-model="product.size" editable :options="sizes" optionLabel="name"
-                                            placeholder="Select a City" class="w-full" />
+                                        <Select v-model="product.size" editable :options="sizes"
+                                            :invalid="Array.isArray(validationErrors.size)" placeholder="Select a City"
+                                            class="w-full" />
+                                        <ErrorMessage :errors="validationErrors.size" />
                                     </div>
                                 </div>
                             </div>
