@@ -20,13 +20,14 @@ const productId = computed(() => route.params.id);
 const isEditMode = computed(() => !!productId.value);
 
 const {
-    createProduct,
-    updateProduct,
-    fetchProductById,
     loading,
     validationErrors,
     product,
     images,
+    createProduct,
+    updateProduct,
+    publishProduct,
+    fetchProductById,
     changeProductStatus,
     uploadImages,
     fetchImages,
@@ -192,14 +193,31 @@ onMounted(async () => {
                 </div>
 
                 <div class="w-full border rounded-md p-2" v-cloak>
-                    <div class="flex justify-end items-center gap-2" v-if="isEditMode">
-                        <Button
-                            v-if="!loading && product.product_status?.identifier != 'archived' && product.external_id"
-                            type="submit" label="Archivovať produkt" severity="warn" size="large" outlined
-                            v-on:click="changeStatus('archived')" :loading="loading" />
-                        <Button v-if="!loading /* && !product.external_id */" type="submit" label="Publikovať produkt"
-                            severity="success" size="large" outlined v-on:click="changeStatus('active')"
-                            :loading="loading" />
+                    <div class="flex justify-between items-center gap-2">
+                        <div class="flex items-center justify-center gap-2">
+                            <Button
+                                v-if="!loading && product.product_status?.identifier != 'archived' && product.external_id"
+                                type="submit" label="Archivovať produkt" severity="warn" size="small"
+                                v-on:click="changeStatus('archived')" :loading="loading" />
+                            <Button
+                                v-if="!loading && product.product_status?.identifier != 'active' && product.external_id"
+                                type="submit" label="Aktivovať produkt" severity="success" size="small"
+                                v-on:click="changeStatus('active')" :loading="loading" />
+                        </div>
+                        <div class="flex items-center justify-center gap-2">
+                            <Button type="submit" label="Uložiť koncept" severity="primary" :outlined="true"
+                                size="small" :loading="loading" />
+
+                            <template v-if="isEditMode">
+                                <Button v-if="!loading && product.external_id" type="submit" label="Publikovať zmeny"
+                                    severity="success" size="small" v-on:click="updateProduct(Number(productId), true)"
+                                    :loading="loading" />
+                            </template>
+
+                            <Button v-if="!loading && !product.external_id && productId" type="submit"
+                                label="Publikovať produkt" severity="success" size="small"
+                                v-on:click="publishProduct(Number(productId))" :loading="loading" />
+                        </div>
                     </div>
                     <div class="w-full flex justify-end mt-2" v-cloak>
                         <template v-if="product.external_id">
@@ -445,13 +463,6 @@ onMounted(async () => {
                         </TabPanel>
                     </TabPanels>
                 </Tabs>
-
-                <!-- Akcie -->
-                <div class="flex justify-end gap-3 mt-5">
-                    <Button type="submit" label="Zrušiť" severity="secondary" outlined
-                        v-on:click="router.push({ name: 'products.index' })"></Button>
-                    <Button type="submit" label="Uložiť produkt" severity="primary" :loading="loading"></Button>
-                </div>
             </div>
         </form>
 

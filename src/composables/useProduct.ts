@@ -103,13 +103,16 @@ export function useProduct() {
         }
     };
 
-    const updateProduct = async (id: number) => {
+    const updateProduct = async (id: number, publish_changes: boolean = false) => {
         loading.value = true;
         error.value = null;
         validationErrors.value = {};
 
         try {
-            return await axiosInstance.put(`/product/${id}`, product.value);
+            return await axiosInstance.put(`/product/${id}`, {
+                ...product.value,
+                publish_changes,
+            });        
         } catch (err: any) {
             if (err.response && err.response.status === 422) {
                 validationErrors.value = err.response.data.errors;
@@ -137,6 +140,7 @@ export function useProduct() {
     const changeProductStatus = async (id: number, status_identifier: string) => {
         loading.value = true;
         error.value = null;
+
         try {
             return await axiosInstance.post(`change-product-status`, {
                 productStatusIdentifier: status_identifier,
@@ -144,6 +148,21 @@ export function useProduct() {
             });
         } catch (err: any) {
             error.value = err.message || 'Chyba pri zmene stavu produktu';
+        } finally {
+            loading.value = false;
+        }
+    };
+
+    const publishProduct = async (id: number) => {
+        loading.value = true;
+        error.value = null;
+
+        try {
+            return await axiosInstance.post(`/product/publish-product`, {
+                productId: id,
+            });
+        } catch (err: any) {
+            error.value = err.message || 'Chyba pri publikovaní produktu';
         } finally {
             loading.value = false;
         }
@@ -234,6 +253,7 @@ export function useProduct() {
         fetchProductById,
         createProduct,
         updateProduct,
+        publishProduct,
         deleteProduct,
         changeProductStatus,
         fetchImages,
