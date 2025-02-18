@@ -11,6 +11,7 @@ import ErrorMessage from '@/components/Error/Input/ErrorMessage.vue';
 import { useShop } from '@/composables/useShop';
 import { usePrimeVue } from 'primevue/config';
 import { useProductTag } from '@/composables/useProductTags';
+import { useProductDeliveryTimes } from '@/composables/useProductDeliveryTimes';
 
 const $primevue = usePrimeVue();
 
@@ -36,6 +37,7 @@ const {
 } = useProduct();
 const { productTags, fetchProductTags } = useProductTag();
 const { shops, fetchShops } = useShop();
+const { productDeliveryTimes, fetchProductDeliveryTimes } = useProductDeliveryTimes();
 
 const pageTitle = computed(() => (isEditMode.value ? 'Upraviť produkt' : 'Vytvoriť produkt'));
 
@@ -58,7 +60,7 @@ const sizes = ref([
     'Extra Large',
 ]);
 
-const value = ref('0');
+const value = ref('3');
 
 const submitForm = async () => {
     try {
@@ -169,6 +171,7 @@ const setMainProductImage = async (index: any) => {
 onMounted(async () => {
     await fetchShops();
     await fetchProductTags();
+    await fetchProductDeliveryTimes();
 
     if (isEditMode.value) {
         await fetchProductById(Number(productId.value));
@@ -324,14 +327,14 @@ onMounted(async () => {
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <div class="flex flex-col gap-2">
                                         <label for="category" class="font-medium text-gray-700">Farba</label>
-                                        <Select v-model="product.color" editable :options="colors"
+                                        <Select v-model="product.color" :options="colors"
                                             :invalid="Array.isArray(validationErrors.color)" placeholder="Select a City"
                                             class="w-full" />
                                         <ErrorMessage :errors="validationErrors.color" />
                                     </div>
                                     <div class="flex flex-col gap-2">
                                         <label for="category" class="font-medium text-gray-700">Veľkosť</label>
-                                        <Select v-model="product.size" editable :options="sizes"
+                                        <Select v-model="product.size" :options="sizes"
                                             :invalid="Array.isArray(validationErrors.size)" placeholder="Select a City"
                                             class="w-full" />
                                         <ErrorMessage :errors="validationErrors.size" />
@@ -460,6 +463,12 @@ onMounted(async () => {
                                 <Textarea id="free_description" v-model="product.free_description" rows="3"
                                     placeholder="Krátky popis" class="w-full" />
                             </div>
+                        </TabPanel>
+                        <TabPanel value="3">
+                            <Select v-model="product.product_delivery_time_id" :options="productDeliveryTimes" defaultValue="Neurčené"
+                                optionLabel="name" optionValue="id" :invalid="Array.isArray(validationErrors.product_delivery_time_id)"
+                                placeholder="Select a delivery time" class="w-full" />
+                            <ErrorMessage :errors="validationErrors.product_delivery_time_id" />
                         </TabPanel>
                     </TabPanels>
                 </Tabs>

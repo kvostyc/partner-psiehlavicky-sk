@@ -19,7 +19,19 @@ interface Product {
     size: string;
     color: string;
     price: number | string;
+    product_delivery_time: ProductDeliveryTime | null;
+    product_delivery_time_id: number | null;
 }
+
+interface ProductDeliveryTime {
+    id?: number
+    name: string
+    identifier: string
+    caption?: string
+    color?: string
+    bg_color?: string
+    icon?: string
+  }
 
 interface ProductStatus {
     name: string;
@@ -51,6 +63,8 @@ export function useProduct() {
         size: '',
         color: '',
         price: 0,
+        product_delivery_time: null,
+        product_delivery_time_id: null,
     });
 
     const validationErrors = ref<Record<string, string[]>>({});

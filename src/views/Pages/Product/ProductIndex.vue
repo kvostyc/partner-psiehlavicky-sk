@@ -18,7 +18,7 @@ const $toast = useToast();
 const pageTitle = ref('Moje produkty');
 const value = ref("");
 
-const { products, loading, fetchProducts, getMainImage } = useProduct();
+const { products, loading, fetchProducts } = useProduct();
 
 const searchResults = ref<Product[]>([]);
 
@@ -75,22 +75,8 @@ const editProduct = async (productId: string | number | undefined) => {
   router.push(`/product/edit/${Number(productId)}`);
 };
 
-const loadMainImages = async () => {
-  if (!products.value.length) return;
-
-  for (const product of products.value) {
-    try {
-      const response = await getMainImage(Number(product.id));
-      set(product, 'main_image', response?.data.url);
-    } catch (error) {
-      set(product, 'main_image', 'https://placehold.co/400');
-    }
-  }
-};
-
 const loadProducts = async () => {
   await fetchProducts();
-  await loadMainImages();
 };
 
 
@@ -137,7 +123,7 @@ onMounted(async () => {
         <Column field="ean" header="Ean"></Column>
         <Column header="Image">
           <template #body="slotProps">
-            <img :src="slotProps.data.main_image || 'https://placehold.co/400'" :alt="slotProps.data.name"
+            <img :src="slotProps.data.main_image?.original_url || 'https://placehold.co/400'" :alt="slotProps.data.name"
               class="w-24 rounded" />
           </template>
         </Column>
