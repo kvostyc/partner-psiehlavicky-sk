@@ -42,16 +42,7 @@ interface Product {
 }
 
 const search = (event: any) => {
-  searchResults.value = [...Array(10).keys()].map((item) => ({
-    id: item,
-    name: event.query + '-' + item,
-    product_code: '',
-    ean: '',
-    free_description: '',
-    shop_id: null,
-    category: null,
-    tags: [],
-  }));
+    console.log(event);
 };
 
 const getSeverity = (param: string) => {

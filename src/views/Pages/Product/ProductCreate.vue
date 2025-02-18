@@ -117,7 +117,7 @@ const changeStatus = async (identifier: string) => {
 
 const totalSize = ref(0);
 const totalSizePercent = ref(0);
-const files = ref([]);
+const files = ref<File[]>([]);
 const uploadedFiles = ref([]);
 
 const onRemoveTemplatingFile = (file: any, removeFileCallback: CallableFunction, index: number) => {
@@ -138,27 +138,25 @@ const uploadEvent = (callback: CallableFunction) => {
     callback();
 };
 
-const formatSize = (bytes: number) => {
+const formatSize = (bytes: number): string => {
     const k = 1024;
     const dm = 3;
     const sizes = $primevue.config.locale?.fileSizeTypes;
 
-    if (sizes) {
-        if (bytes === 0) {
-            return `0 ${sizes[0]}`;
-        }
-
-        const i = Math.floor(Math.log(bytes) / Math.log(k));
-        const formattedSize = parseFloat((bytes / Math.pow(k, i)).toFixed(dm));
-
-        return `${formattedSize} ${sizes[i]}`;
+    if (!sizes || bytes === 0) {
+        return '0 B';
     }
-    return null;
+
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    const formattedSize = parseFloat((bytes / Math.pow(k, i)).toFixed(dm));
+
+    return `${formattedSize} ${sizes[i]}`;
 };
 
 const uploadProductFiles = async () => {
-    await uploadImages(Number(productId.value), files.value);
-    await fetchImages(Number(productId.value));
+    if (files.value.length > 0) {
+        await uploadImages(Number(productId.value), files.value);
+    } await fetchImages(Number(productId.value));
     toast.add({ severity: "info", summary: "Success", detail: "File Uploaded", life: 3000 });
 };
 
@@ -170,6 +168,10 @@ const deleteProductImage = async (index: any) => {
 const setMainProductImage = async (index: any) => {
     await setMainImage(Number(productId.value), index);
     await fetchImages(Number(productId.value));
+};
+
+const fileObjectURL = (file: File) => {
+  return URL.createObjectURL(file);
 };
 
 onMounted(async () => {
@@ -408,7 +410,7 @@ onMounted(async () => {
                                                         class="p-8 rounded-border flex flex-col border border-surface items-center gap-4">
                                                         <div>
                                                             <img role="presentation" :alt="file.name"
-                                                                :src="file.objectURL" width="100" height="50" />
+                                                                :src="fileObjectURL(file)" width="100" height="50" />
                                                         </div>
                                                         <span
                                                             class="font-semibold text-ellipsis max-w-60 whitespace-nowrap overflow-hidden">{{
@@ -430,7 +432,7 @@ onMounted(async () => {
                                                         class="p-8 rounded-border flex flex-col border border-surface items-center gap-4">
                                                         <div>
                                                             <img role="presentation" :alt="file.name"
-                                                                :src="file.objectURL" width="100" height="50" />
+                                                                :src="fileObjectURL(file)" width="100" height="50" />
                                                         </div>
                                                         <span
                                                             class="font-semibold text-ellipsis max-w-60 whitespace-nowrap overflow-hidden">{{

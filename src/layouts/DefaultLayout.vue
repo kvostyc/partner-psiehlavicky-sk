@@ -4,6 +4,7 @@ import HeaderArea from '@/components/Header/HeaderArea.vue';
 import SidebarArea from '@/components/Sidebar/SidebarArea.vue';
 import LoadingOverlay from '@/components/Loadings/LoadingOverlay.vue';
 import Pusher from 'pusher-js';
+import type { Channel } from 'pusher-js';
 import { useToast } from "primevue/usetoast";
 import { Avatar, Toast } from 'primevue';
 
@@ -15,7 +16,7 @@ const pusher = app?.appContext.config.globalProperties.$pusher ?? new Pusher(imp
     cluster: import.meta.env.VITE_PUSHER_CLUSTER,
 });
 
-let channel: Pusher.Channel;
+let channel: Channel;
 
 const showNotification = (title: string, message: string, url?: string) => {
     lastMessage.value = { title, message, url };
