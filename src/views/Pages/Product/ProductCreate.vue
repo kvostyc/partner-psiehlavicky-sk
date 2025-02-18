@@ -61,7 +61,7 @@ const sizes = ref([
     'Extra Large',
 ]);
 
-const value = ref('2');
+const value = ref('0');
 
 const submitForm = async () => {
     try {

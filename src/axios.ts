@@ -3,7 +3,7 @@ import router from "@/router";
 import { useLoadingStore } from "@/stores/loadingStore";
 
 const axiosInstance = axios.create({
-    baseURL: "http://localhost:8000/api/",
+    baseURL: import.meta.env.VITE_API_BASE_URL + "/api/",
     withCredentials: true,
     withXSRFToken: true,
 });
@@ -33,7 +33,7 @@ axiosInstance.interceptors.response.use(
 
         if (error.response && error.response.status === 419) {
             try {
-                await axios.get("http://localhost:8000/sanctum/csrf-cookie", {
+                await axios.get(import.meta.env.VITE_API_BASE_URL + "/sanctum/csrf-cookie", {
                     withCredentials: true,
                 });
 

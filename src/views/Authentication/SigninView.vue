@@ -27,7 +27,7 @@ const errors = reactive({
 
 const login = async (payload: LoginForm) => {
   await axiosInstance.get("/sanctum/csrf-cookie", {
-    baseURL: "http://localhost:8000",
+    baseURL: import.meta.env.VITE_API_BASE_URL,
   });
 
   errors.email = [];
