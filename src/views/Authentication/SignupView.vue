@@ -50,7 +50,7 @@ const register = async (payload: RegisterForm) => {
 
 <template>
   <DefaultAuthCard subtitle="Psiehlavičky.sk" title="Partner register">
-    <form @submit.prevent="register(form)">
+<!--     <form @submit.prevent="register(form)">
       <InputGroup label="Name" type="text" placeholder="Enter your full name" v-model="form.name">
         <svg class="fill-current" width="22" height="22" viewBox="0 0 22 22" fill="none"
           xmlns="http://www.w3.org/2000/svg">
@@ -119,6 +119,6 @@ const register = async (payload: RegisterForm) => {
           <router-link to="/login" class="text-primary">Sign in</router-link>
         </p>
       </div>
-    </form>
+    </form> -->
   </DefaultAuthCard>
 </template>

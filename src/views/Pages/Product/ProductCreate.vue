@@ -12,6 +12,7 @@ import { useShop } from '@/composables/useShop';
 import { usePrimeVue } from 'primevue/config';
 import { useProductTag } from '@/composables/useProductTags';
 import { useProductDeliveryTimes } from '@/composables/useProductDeliveryTimes';
+import Editor from 'primevue/editor';
 
 const $primevue = usePrimeVue();
 
@@ -60,7 +61,7 @@ const sizes = ref([
     'Extra Large',
 ]);
 
-const value = ref('3');
+const value = ref('2');
 
 const submitForm = async () => {
     try {
@@ -455,18 +456,19 @@ onMounted(async () => {
                             <div class="flex flex-col gap-2 mt-4">
                                 <label for="free_description" class="font-medium text-gray-700">Krátky popis pod názvom
                                     produktu</label>
-                                <Textarea id="free_description" v-model="product.free_description" rows="3"
-                                    placeholder="Krátky popis" class="w-full" />
+                                <Editor id="free_description" v-model="product.free_description"
+                                    editorStyle="height: 150px" placeholder="Krátky popis" class="w-full" />
                             </div>
                             <div class="flex flex-col gap-2 mt-4">
                                 <label for="free_description" class="font-medium text-gray-700">Dlhý popis</label>
-                                <Textarea id="free_description" v-model="product.free_description" rows="3"
-                                    placeholder="Krátky popis" class="w-full" />
+                                <Editor id="free_description" editorStyle="height: 300px" placeholder="Dlhý popis"
+                                    class="w-full" />
                             </div>
                         </TabPanel>
                         <TabPanel value="3">
-                            <Select v-model="product.product_delivery_time_id" :options="productDeliveryTimes" defaultValue="Neurčené"
-                                optionLabel="name" optionValue="id" :invalid="Array.isArray(validationErrors.product_delivery_time_id)"
+                            <Select v-model="product.product_delivery_time_id" :options="productDeliveryTimes"
+                                defaultValue="Neurčené" optionLabel="name" optionValue="id"
+                                :invalid="Array.isArray(validationErrors.product_delivery_time_id)"
                                 placeholder="Select a delivery time" class="w-full" />
                             <ErrorMessage :errors="validationErrors.product_delivery_time_id" />
                         </TabPanel>
