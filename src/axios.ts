@@ -31,7 +31,7 @@ axiosInstance.interceptors.response.use(
         const loadingStore = useLoadingStore();
         loadingStore.stopLoading();
 
-        if (error.response && error.response.status === 419) {
+        if (error.response && (error.response.status === 419)) {
             try {
                 await axios.get(import.meta.env.VITE_API_BASE_URL + "/sanctum/csrf-cookie", {
                     withCredentials: true,
@@ -43,7 +43,7 @@ axiosInstance.interceptors.response.use(
             }
         }
 
-        if (error.response && error.response.status === 401) {
+        if (error.response && (error.response.status === 401 || error.response.status === 204)) {
             if (router.currentRoute.value.name !== "signin") {
                 router.push({ name: "signin" });
             }
