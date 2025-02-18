@@ -65,24 +65,7 @@ onClickOutside(target, () => {
       </div>
 
       <ul class="flex h-auto flex-col overflow-y-auto">
-        <template v-for="(item, index) in messagesList" :key="index">
-          <li>
-            <router-link
-              class="flex gap-4.5 border-t border-stroke px-4.5 py-3 hover:bg-gray-2 dark:border-strokedark dark:hover:bg-meta-4"
-              :to="item.route"
-            >
-              <div class="h-12.5 w-12.5 rounded-full">
-                <img :src="item.userImg" alt="User" />
-              </div>
 
-              <div>
-                <h6 class="text-sm font-medium text-black dark:text-white">{{ item.name }}</h6>
-                <p class="text-sm">{{ item.message }}</p>
-                <p class="text-xs">{{ item.time }}</p>
-              </div>
-            </router-link>
-          </li>
-        </template>
       </ul>
     </div>
     <!-- Dropdown End -->

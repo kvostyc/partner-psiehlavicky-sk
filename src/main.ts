@@ -14,6 +14,7 @@ import router from './router'
 import ToastPlugin from 'vue-toast-notification'
 import 'vue-toast-notification/dist/theme-bootstrap.css'
 import PrimeVue from 'primevue/config'
+import Lara from '@primevue/themes/Lara'
 import ToastService from 'primevue/toastservice'
 
 // Pusher.js
@@ -32,6 +33,7 @@ app.use(ToastPlugin)
 app.use(ToastService)
 app.use(PrimeVue, {
     theme: {
+        preset: Lara,
         options: {
             darkModeSelector: false
         }

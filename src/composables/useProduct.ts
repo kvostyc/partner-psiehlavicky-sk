@@ -18,7 +18,7 @@ interface Product {
     external_id?: number | null;
     size: string;
     color: string;
-    price: number | string;
+    price: string;
     product_delivery_time: ProductDeliveryTime | null;
     product_delivery_time_id: number | null;
 }
@@ -62,7 +62,7 @@ export function useProduct() {
         external_id: null,
         size: '',
         color: '',
-        price: 0,
+        price: '0.00',
         product_delivery_time: null,
         product_delivery_time_id: null,
     });
@@ -197,7 +197,7 @@ export function useProduct() {
         }
     };
 
-    const uploadImages = async (id: number, files: File) => {
+    const uploadImages = async (id: number, files: string) => {
         loading.value = true;
         error.value = null;
 

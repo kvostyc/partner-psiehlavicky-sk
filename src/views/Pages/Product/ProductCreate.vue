@@ -120,7 +120,7 @@ const totalSizePercent = ref(0);
 const files = ref([]);
 const uploadedFiles = ref([]);
 
-const onRemoveTemplatingFile = (file: string, removeFileCallback: CallableFunction, index: number) => {
+const onRemoveTemplatingFile = (file: any, removeFileCallback: CallableFunction, index: number) => {
     removeFileCallback(index);
     totalSize.value -= parseInt(formatSize(file.size));
     totalSizePercent.value = totalSize.value / 10;
@@ -128,7 +128,7 @@ const onRemoveTemplatingFile = (file: string, removeFileCallback: CallableFuncti
 
 const onSelectedFiles = (event: any) => {
     files.value = event.files;
-    files.value.forEach((file) => {
+    files.value.forEach((file: any) => {
         totalSize.value += parseInt(formatSize(file.size));
     });
 };
@@ -143,14 +143,17 @@ const formatSize = (bytes: number) => {
     const dm = 3;
     const sizes = $primevue.config.locale?.fileSizeTypes;
 
-    if (bytes === 0) {
-        return `0 ${sizes[0]}`;
+    if (sizes) {
+        if (bytes === 0) {
+            return `0 ${sizes[0]}`;
+        }
+
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        const formattedSize = parseFloat((bytes / Math.pow(k, i)).toFixed(dm));
+
+        return `${formattedSize} ${sizes[i]}`;
     }
-
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    const formattedSize = parseFloat((bytes / Math.pow(k, i)).toFixed(dm));
-
-    return `${formattedSize} ${sizes[i]}`;
+    return null;
 };
 
 const uploadProductFiles = async () => {
