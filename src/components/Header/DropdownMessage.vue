@@ -10,48 +10,6 @@ onClickOutside(target, () => {
   dropdownOpen.value = false
 })
 
-import userOne from '@/assets/images/user/user-01.png'
-import userTwo from '@/assets/images/user/user-02.png'
-import userThree from '@/assets/images/user/user-03.png'
-import userFour from '@/assets/images/user/user-04.png'
-
-const messagesList = ref([
-  {
-    route: '#',
-    userImg: userTwo,
-    name: 'Mariya Desoja',
-    message: 'I like your confidence 💪',
-    time: '2min ago'
-  },
-  {
-    route: '#',
-    userImg: userOne,
-    name: 'Robert Jhon',
-    message: 'Can you share your offer?',
-    time: '10min ago'
-  },
-  {
-    route: '#',
-    userImg: userThree,
-    name: 'Henry Dholi',
-    message: 'I cam across your profile and...',
-    time: '1day ago'
-  },
-  {
-    route: '#',
-    userImg: userFour,
-    name: 'Cody Fisher',
-    message: 'I’m waiting for you response!',
-    time: '5day ago'
-  },
-  {
-    route: '#',
-    userImg: userTwo,
-    name: 'Mariya Desoja',
-    message: 'I like your confidence 💪',
-    time: '2min ago'
-  }
-])
 </script>
 
 <template>
