@@ -31,15 +31,19 @@ axiosInstance.interceptors.response.use(
         const loadingStore = useLoadingStore();
         loadingStore.stopLoading();
 
-        if (error.response && (error.response.status === 419)) {
-            try {
-                await axios.get(import.meta.env.VITE_API_BASE_URL + "/sanctum/csrf-cookie", {
-                    withCredentials: true,
-                });
+        if (error.response && error.response.status === 419) {
+            if (!error.config._retry) {
+                error.config._retry = true;
+                
+                try {
+                    await axios.get(import.meta.env.VITE_API_BASE_URL + "/sanctum/csrf-cookie", {
+                        withCredentials: true,
+                    });
 
-                return axiosInstance(error.config);
-            } catch (csrfError) {
-                return Promise.reject(csrfError);
+                    return axiosInstance(error.config);
+                } catch (csrfError) {
+                    return Promise.reject(csrfError);
+                }
             }
         }
 
