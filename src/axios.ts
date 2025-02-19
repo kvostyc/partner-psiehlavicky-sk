@@ -30,20 +30,24 @@ axiosInstance.interceptors.response.use(
     async (error) => {
         const loadingStore = useLoadingStore();
         loadingStore.stopLoading();
-
+        
         if (error.response && error.response.status === 419) {
-            try {
-                await axios.get(import.meta.env.VITE_API_BASE_URL + "/sanctum/csrf-cookie", {
-                    withCredentials: true,
-                });
+            if (!error.config._retry) {
+                error.config._retry = true; 
+                
+                try {
+                    await axios.get(import.meta.env.VITE_API_BASE_URL + "/sanctum/csrf-cookie", {
+                        withCredentials: true,
+                    });
 
-                return axiosInstance(error.config);
-            } catch (csrfError) {
-                return Promise.reject(csrfError);
+                    return axiosInstance(error.config);
+                } catch (csrfError) {
+                    return Promise.reject(csrfError);
+                }
             }
         }
 
-        if (error.response && error.response.status === 401) {
+        if (error.response && (error.response.status === 401 || error.response.status === 204)) {
             if (router.currentRoute.value.name !== "signin") {
                 router.push({ name: "signin" });
             }
